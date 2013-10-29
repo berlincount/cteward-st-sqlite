@@ -9,16 +9,16 @@ ENV: CTEWARD_ST_sqlite_CONFIG can override config file name
 
 import json
 import os
-from flask import Flask
+import flask
+import flask.ext.sqlalchemy
+import flask.ext.restless
 from OpenSSL import SSL
-
-import api
-
-import sys
 
 config = {}
 sslcontext = None
 app = None
+db = None
+manager = None
 
 def load_config():
   global config
@@ -50,20 +50,53 @@ def setup_ssl():
     sslcontext.use_certificate_file(config['ssl']['cert'])
     sslcontext.use_privatekey_file(config['ssl']['key'])
 
-def setup_database():
-  # database configured? initialize it!
-  #if 'database' in config:
-  #  Database.init(config['database'])
-  pass
-
 def setup_flask():
   global app
   # set up Flask object, configure it, add API, and go!
-  app = Flask('st-sqlite')
+  app = flask.Flask('st-sqlite')
   app.config.update(**config['flask'])
 
-def setup_api():
-  api.init(app, config=config['api'])
+def setup_database():
+  global db
+  global Tariff
+  global Item
+  global Price
+  db = flask.ext.sqlalchemy.SQLAlchemy(app)
+
+  class Tariff(db.Model):
+    __tablename__ = 'tariffs'
+    id          = db.Column('tariff_id',    db.Integer, primary_key=True)
+    displayName = db.Column('dn',           db.String(80))
+    meta_unit   = db.Column('meta',         db.Text)
+    items       = db.relationship('Item')
+
+  class Item(db.Model):
+    __tablename__ = 'items'
+    id          = db.Column('item_id',      db.Integer, primary_key=True)
+    displayName = db.Column('dn',           db.String(80))
+    tariff_id   = db.Column(db.Integer,     db.ForeignKey('tariffs.tariff_id'))
+    price_id    = db.Column(db.Integer,     db.ForeignKey('prices.price_id'))
+    meta        = db.Column('meta',         db.Text)
+
+  class Price(db.Model):
+    __tablename__ = 'prices'
+    id          = db.Column('price_id',     db.Integer, primary_key=True)
+    displayName = db.Column('dn',           db.String(80))
+    amount      = db.Column('amount',       db.Float)
+    amount_unit = db.Column('amount_unit',  db.String(12))
+    price       = db.Column('price',        db.Float)
+    price_unit  = db.Column('price_unit',   db.String(12))
+    meta        = db.Column('meta',         db.Text)
+
+  db.create_all()
+
+def setup_manager():
+  global manager
+  manager = flask.ext.restless.APIManager(app, flask_sqlalchemy_db=db)
+
+  manager.create_api(Tariff, methods=['GET', 'POST', 'PUT', 'DELETE'])
+  manager.create_api(Item,   methods=['GET', 'POST', 'PUT', 'DELETE'])
+  manager.create_api(Price,  methods=['GET', 'POST', 'PUT', 'DELETE'])
 
 def run_app():
   global app
@@ -73,7 +106,7 @@ if __name__ == '__main__':
   load_config()
   check_config()
   setup_ssl()
-  setup_database()
   setup_flask()
-  setup_api()
+  setup_database()
+  setup_manager()
   run_app()

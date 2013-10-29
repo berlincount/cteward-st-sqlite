@@ -7,5 +7,8 @@
     "port":       14339,
     "debug":      true,
     "use_evalex": false
+  },
+  "flask": {
+    "SQLALCHEMY_DATABASE_URI": "sqlite:///st-sqlite-dev.db"
   }
 }
