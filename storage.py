@@ -39,8 +39,9 @@ def open_database(dbname):
 @app.route("/<dbname>/entries",
            methods=['GET'])
 def get_entries(dbname):
-    # db = open_database(dbname)
-    print("get_entries %s" % dbname)
+    db = open_database(dbname)
+    # FIXME: db would be unused
+    print("get_entries %s" % dbname, db)
     selection = []  # list(r.table('entries').run(g.rdb_conn))
     return json.dumps(selection)
 

@@ -2,7 +2,7 @@ import storage
 import unittest
 
 
-class StorageTestCase(unittest.TestCase):
+class TestStorageCase(unittest.TestCase):
     # check that there is no testing DB present before we test
     @classmethod
     def setUpClass(testclass):
@@ -20,10 +20,9 @@ class StorageTestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
-#    def test_empty_db(self):
-#        result = self.app.get('/__test__/entries')
-#        self.assertEqual(result.status_code,200)
-#        self.assertEqual(result.data,[])
+    def test_empty_db(self):
+        result = self.app.get('/__test__/entries')
+        self.assertEqual(result.status_code, 404)
 
 if __name__ == '__main__':
     unittest.main()
