@@ -37,4 +37,5 @@ nosetests.xml
 .project
 .pydevproject
 
-st-sqlite-dev.db
+st-sqlite-dev.sqlite3
+__test__.sqlite3
