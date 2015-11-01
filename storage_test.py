@@ -10,7 +10,7 @@ class TestStorageCase(unittest.TestCase):
         app = storage.app.test_client()
         result = app.get('/__test__/entries')
         if result.status_code != 404:
-            print result.status_code
+            print(result.status_code)
             raise Exception("__test__ database already exists, not proceeding")
 
     def setUp(self):

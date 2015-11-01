@@ -121,5 +121,5 @@ if __name__ == "__main__":
         description='Run the Flask cteward-st-sqlite app')
 
     args = parser.parse_args()
-    print app.url_map
+    print(app.url_map)
     app.run(host='0.0.0.0', debug=True)
