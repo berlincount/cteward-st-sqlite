@@ -1,8 +1,6 @@
-import os
 import storage
 import unittest
-import tempfile
-from pprint import pprint
+
 
 class StorageTestCase(unittest.TestCase):
     # check that there is no testing DB present before we test
