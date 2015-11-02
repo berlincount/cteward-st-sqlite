@@ -4,9 +4,10 @@
 import argparse
 import sqlite3
 import json
+import glob
 import os
 
-from flask import Flask, render_template, request, abort
+from flask import Flask, render_template, request, jsonify, abort
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -30,6 +31,47 @@ def open_database(dbname):
         abort(520)
 
     return sqlite3.connect('%s.sqlite3' % dbname)
+
+
+@app.route("/_databases",
+           methods=['GET'])
+def databases_get():
+    databases = [
+        database.replace('.sqlite3', '')
+        for database in glob.glob('*.sqlite3')
+    ]
+    return jsonify({'databases': databases})
+
+
+@app.route("/_databases",
+           methods=['POST'])
+def databases_new():
+    if not request.json:
+        abort(400)
+    if 'database' not in request.json:
+        abort(400)
+
+    # FIXME: sanitized database name
+    # FIXME: limit _ database names
+    if os.path.exists('%s.sqlite3' % request.json['database']):
+        abort(409)
+    else:
+        db = sqlite3.connect('%s.sqlite3' % request.json['database'])
+        if not db:
+            abort(500)
+        cursor = db.cursor()
+        cursor.execute('CREATE TABLE metadata (version text, created datetime, updated datetime)')
+    return jsonify({'database': request.json['database']})
+
+
+@app.route("/_databases/<dbname>",
+           methods=['DELETE'])
+def databases_delete(dbname):
+    if not os.path.exists('%s.sqlite3' % dbname):
+        abort(404)
+    os.remove('%s.sqlite3' % dbname)
+
+    return jsonify({'message': 'ok'})
 
 
 # list existing entries (TODO: no subtables yet)
