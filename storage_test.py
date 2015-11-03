@@ -34,7 +34,7 @@ class TestStorageCase(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result.content_type, 'application/json')
 
-        data = json.loads(result.get_data())
+        data = json.loads(result.get_data(as_text=True))
         self.assertIn('databases', data)
         self.assertNotIn('__test__', data['databases'])
 
@@ -48,14 +48,14 @@ class TestStorageCase(unittest.TestCase):
         self.assertEqual(result.content_type, 'application/json')
         self.assertDictEqual({
             "database": "__test__"
-        }, json.loads(result.get_data()))
+        }, json.loads(result.get_data(as_text=True)))
 
     def test_db_02_created(self):
         result = self.app.get('/_databases')
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result.content_type, 'application/json')
 
-        data = json.loads(result.get_data())
+        data = json.loads(result.get_data(as_text=True))
         self.assertIn('databases', data)
         self.assertIn('__test__', data['databases'])
 
