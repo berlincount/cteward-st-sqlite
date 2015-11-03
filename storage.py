@@ -60,7 +60,12 @@ def databases_new():
         if not db:
             abort(500)
         cursor = db.cursor()
-        cursor.execute('CREATE TABLE metadata (version text, created datetime, updated datetime)')
+        cursor.execute(
+            'CREATE TABLE metadata (\
+               version text,\
+               created datetime,\
+               updated datetime\
+             )')
     return jsonify({'database': request.json['database']})
 
 

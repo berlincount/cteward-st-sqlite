@@ -2,6 +2,7 @@ import storage
 import json
 import unittest
 
+
 class TestStorageCase(unittest.TestCase):
     # check that there is no testing DB present before we test
     @classmethod
