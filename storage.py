@@ -100,8 +100,6 @@ def get_entries(dbname):
         dataset.append(entry[0])
     db.close()
 
-    print (dataset)
-
     return jsonify(data=dataset)
 
 
