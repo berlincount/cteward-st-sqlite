@@ -1,29 +1,29 @@
-import storage
 import json
 import unittest
+from app import app as _app
 
 
-class TestStorageCase(unittest.TestCase):
+class EntrySubAPITestcases(unittest.TestCase):
     # check that there is no testing DB present before we test
     @classmethod
     def setUpClass(testclass):
-        storage.app.config['TESTING'] = True
-        app = storage.app.test_client()
+        _app.config['TESTING'] = True
+        app = _app.test_client()
         result = app.get('/__test__/')
         if result.status_code != 404:
             print(result.status_code)
             raise Exception("__test__ database already exists, not proceeding")
 
     def setUp(self):
-        storage.app.config['TESTING'] = True
-        self.app = storage.app.test_client()
+        _app.config['TESTING'] = True
+        self.app = _app.test_client()
 
     def tearDown(self):
         pass
 
     @classmethod
     def tearDownClass(testclass):
-        app = storage.app.test_client()
+        app = _app.test_client()
         result = app.delete('/_databases/__test__')
         if result.status_code != 200:
             print(result.status_code)
