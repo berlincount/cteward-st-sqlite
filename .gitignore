@@ -7,5 +7,6 @@
 .abandoned
 *.egg-info
 st-sqlite-dev.sqlite3
+st-sqlite-dev.db
 __test__.sqlite3
 
